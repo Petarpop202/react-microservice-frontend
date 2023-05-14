@@ -12,12 +12,13 @@ export const router = createBrowserRouter([
         path: '/',
         element: <App />,
         children: [
-            {path: '', element: <HometPage />},
-            {path: 'catalog', element: <Catalog />},
-            {path: 'about', element: <AboutPage />},
-            {path: 'login', element: <Login />},
-            {path: 'register', element: <Register />},
-            {path: 'new-reservation/:id', element: <CreateReservation/>}
+            { path: '', element: <HometPage /> },
+            { path: 'catalog', element: <Catalog /> },
+            { path: 'about', element: <AboutPage /> },
+            { path: 'login', element: <Login /> },
+            { path: 'register', element: <Register /> },
+            { path: "create-accomodation", element: <CreateAccomodation /> },
+            { path: 'new-reservation/:id', element: <CreateReservation/> }
         ]
 
     }
