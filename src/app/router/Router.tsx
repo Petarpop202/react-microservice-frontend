@@ -6,6 +6,7 @@ import Catalog from "../../features/catalog/Catalog";
 import HometPage from "../../features/home/HomePage";
 import App from "../layout/App";
 import CreateReservation from "../../features/reservation/CreateReservation";
+import { CreateAccomodation } from "../../features/create-accomodation/CreateAccomodation";
 
 export const router = createBrowserRouter([
     {
