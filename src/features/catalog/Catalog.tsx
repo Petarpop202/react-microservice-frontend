@@ -6,11 +6,11 @@ import { useEffect, useState } from "react"
 import agent from "../../app/api/agent"
 import { NavLink } from "react-router-dom"
 import { AccomodationSearch } from "../../app/models/AccomodationSearch"
+import { useAppSelector } from "../../app/store/configureStore"
 
 export default function Catalog() {
   const [accomodations, setAccomodations] = useState<AccomodationSearch[]>([])
   const [capacity, setCapacity] = useState<number>(0)
-
   useEffect(() => {
     agent.Accomodation.getAccomodations()
       .then((response) => setAccomodations(response))
@@ -20,7 +20,10 @@ export default function Catalog() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={3}>
-        <SearchBar setFilteredFlights={setAccomodations} setTickets={setCapacity}/>
+        <SearchBar
+          setFilteredFlights={setAccomodations}
+          setTickets={setCapacity}
+        />
       </Grid>
       <Grid item xs={9}>
         <Button
