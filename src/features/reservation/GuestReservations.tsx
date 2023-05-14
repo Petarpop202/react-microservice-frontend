@@ -1,10 +1,8 @@
 import { Button, Paper, Typography } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
 import { Reservation } from "../../app/models/Reservation";
 import { ReservationRequest } from "../../app/models/ReservationRequest";
 import agent from "../../app/api/agent";
-import { User } from "../../app/models/User";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/configureStore";
 
@@ -76,6 +74,7 @@ export default function GuestReservations() {
 
     const getNextDay = () => {
         let date = new Date()
+        date.setHours(date.getHours() + 2)
         return new Date(date.setDate(date.getDate() + 1))
     }
 
