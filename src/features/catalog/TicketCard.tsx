@@ -58,7 +58,7 @@ const setFlights = () => {
     </Typography>
   </CardContent>
   <CardActions>
-    <Button size="small" component={Link} to={`/checkout`}>Purchase</Button>
+    <Button size="small" component={Link} to={`/new-reservation/${accomodation.id}`}>Reserve</Button>
     <Button size="small" component={Link} to={`/catalog`} >View more</Button>
   </CardActions>
 </Card>
