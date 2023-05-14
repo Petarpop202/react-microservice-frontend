@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import { store } from "../store/configureStore";
 */
-axios.defaults.baseURL = 'http://localhost:8001/api/';
+axios.defaults.baseURL = 'http://localhost:5069/api/';
 axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -24,8 +24,10 @@ const requests = {
 
 const Account = {
     login: (values: any) => requests.post('Account/login', values),
-    register: (values: any) => requests.post('account/register', values),
-    currentUser: () => requests.get('Account/currentUser')
+    register: (values: any) => requests.post('Account/register', values),
+    currentUser: () => requests.get('Account/currentUser'),
+    delete: (username: any) => requests.delete(`Account/${username}`),
+    updateUser: (user: any) => requests.put(`Account/update`, user)
 }
 
 const Flight = {
