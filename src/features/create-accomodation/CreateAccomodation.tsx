@@ -2,8 +2,11 @@ import { Switch } from "@mantine/core"
 import { Button, Paper, TextField, Typography } from "@mui/material"
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
+import { Accomodation } from "../../app/models/Accomodation"
+import axios from "axios"
+import { Address } from "cluster"
 
 export const CreateAccomodation = () => {
   const [name, setName] = useState<string>("")
@@ -12,14 +15,28 @@ export const CreateAccomodation = () => {
   const [price, setPrice] = useState<number>(0)
   const [minCapacity, setMinCapacity] = useState<number>(0)
   const [maxCapacity, setMaxCapacity] = useState<number>(0)
+  const [accomodations, setAccomodations] = useState<Accomodation | null>(null)
+
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:5176/api/Accomodation")
+  //     .then((response) => setAccomodations(response.data))
+  //     .catch((error) => console.log(error))
+  // }, [])
 
   //address
   const [city, setCity] = useState<string>("")
   const [country, setCountry] = useState<string>("")
   const [street, setStreet] = useState<string>("")
   const [streetNumber, setStreetNumber] = useState<string>("")
-
-  const [pictureUrl, setPictureUrl] = useState<string>("")
+  // const [address, setAddress] = useState({
+  //   id: "3fa85f64-5717-4562-b3fc-2c963f66a666",
+  //   city: "asdf",
+  //   country: "asdf",
+  //   street: "asdf",
+  //   streetNumber: "asdf",
+  // })
+  const [pictureUrl, setPictureUrl] = useState<string>("proba")
   const [availableFromDate, setAvailableFromDate] = useState(new Date())
   const [availableToDate, setAvailableToDate] = useState(new Date())
 
@@ -35,23 +52,30 @@ export const CreateAccomodation = () => {
 
   const handleSubmmit = (event: any) => {
     event.preventDefault()
+    let address = {
+      city: city,
+      country: country,
+      street: street,
+      streetNumber: streetNumber,
+    }
     let newAccomodation = {
+      hostId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       name: name,
       description: description,
       pricePerGuest: pricePerGuest,
       price: price,
       minCapacity: minCapacity,
       maxCapacity: maxCapacity,
-      street: street,
-      streetNumber: streetNumber,
-      city: city,
-      country: country,
+      address: address,
       pictureUrl: "probaa",
       availableFromDate: availableFromDate,
       availableToDate: availableToDate,
       isAutomaticConfirm: isAutomaticConfirm,
     }
-    console.log(newAccomodation)
+    axios
+      .post("http://localhost:5176/api/Accomodation", newAccomodation)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error))
   }
   return (
     <Paper sx={{ mb: 2, padding: 2 }}>

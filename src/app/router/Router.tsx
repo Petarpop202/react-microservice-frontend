@@ -7,6 +7,7 @@ import HometPage from "../../features/home/HomePage"
 import App from "../layout/App"
 import { CreateAccomodation } from "../../features/create-accomodation/CreateAccomodation"
 import Profile from "../../features/account/Profile"
+import CreateReservation from "../../features/reservation/CreateReservation"
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "create-accomodation", element: <CreateAccomodation /> },
-      {path: "profile", element: <Profile /> },
+      { path: "profile", element: <Profile /> },
       { path: 'new-reservation/:id', element: <CreateReservation/> }
     ],
   },
