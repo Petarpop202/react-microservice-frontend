@@ -10,7 +10,7 @@ import { store } from "../store/configureStore";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
-axios.defaults.baseURL = "https://localhost:5090/api/"
+axios.defaults.baseURL = "http://localhost:5069/api/"
 axios.defaults.withCredentials = true
 
 axios.interceptors.request.use(config => {
@@ -53,8 +53,10 @@ const Accomodation = {
 
 const Accomodation = {
     getAccomodations: () => axios.get("https://localhost:5090/api/AccomodationSearch").then(responseBody),
+    getAccomodationsBySearch: (values: any) => axios.get(`https://localhost:5090/api/AccomodationSearch/getBySearch${values}`).then(responseBody),
     getAccomodation: (id: any) => axios.get(`https://localhost:7046/api/Accomodation/${id}`).then(responseBody),
-  }
+    getAllAccomodations: () => axios.get(`https://localhost:7046/api/Accomodation`).then(responseBody),
+}
 
 /*
 const ReservationRequest = {

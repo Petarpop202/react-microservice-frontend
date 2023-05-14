@@ -18,15 +18,15 @@ export default function HostReservations() {
     
     useEffect(() => {
         if (user?.userRole === "HOST") {
-            agent.Accomodation.getAccomodations()
+            agent.Accomodation.getAllAccomodations()
                 .then((response) => {
                     setSelectedAccomodation(response[0])
-                    
-                    agent.Reservation.getReservationsByAccomodationId(selectedAccomodation?.id)
+                    console.log(response[0].id)
+                    agent.Reservation.getReservationsByAccomodationId(response[0].id)
                         .then((response) => setReservations(response))
                         .catch((error) => console.log(error))
 
-                    agent.ReservationRequest.getReservationRequestsByAccomodationId(selectedAccomodation?.id)
+                    agent.ReservationRequest.getReservationRequestsByAccomodationId(response[0].id)
                         .then((response) => setReservationRequests(response))
                         .catch((error) => console.log(error))
                         })
@@ -63,7 +63,7 @@ export default function HostReservations() {
     return (
         <Paper sx={{mb: 2, padding: 2}}>
             <Typography variant="h3">
-                My reservations
+                Reservations
             </Typography>     
             <table>
                 <thead>
@@ -84,7 +84,7 @@ export default function HostReservations() {
                 </tbody>
             </table>
             <Typography variant="h3" sx={{mt: 4}}>
-                My reservation requests
+                Reservation requests
             </Typography> 
             <table>
                 <thead>

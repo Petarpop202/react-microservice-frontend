@@ -62,18 +62,18 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                 </Box>
             
                 {user?.userRole === "GUEST" ?
-                <List sx={{display: 'flex'}}>
-                    {guestMidLinks.map(({title, path}) =>(
-                        <ListItem
-                            component={NavLink}
-                            to={path}
-                            key={path}
-                            sx={navStyles}
-                        >
-                            {title.toUpperCase()}
-                        </ListItem>
-                    ))}
-                </List>
+                    <List sx={{display: 'flex'}}>
+                        {guestMidLinks.map(({title, path}) =>(
+                            <ListItem
+                                component={NavLink}
+                                to={path}
+                                key={path}
+                                sx={navStyles}
+                            >
+                                {title.toUpperCase()}
+                            </ListItem>
+                        ))}
+                    </List>
                 : (
                     user?.userRole === "HOST" ?
                         <List sx={{display: 'flex'}}>
@@ -89,18 +89,18 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                             ))}
                         </List>
                     :
-                    <List sx={{display: 'flex'}}>
-                        {midLinks.map(({title, path}) =>(
-                            <ListItem
-                                component={NavLink}
-                                to={path}
-                                key={path}
-                                sx={navStyles}
-                            >
-                                {title.toUpperCase()}
-                            </ListItem>
-                        ))}
-                    </List>
+                        <List sx={{display: 'flex'}}>
+                            {midLinks.map(({title, path}) =>(
+                                <ListItem
+                                    component={NavLink}
+                                    to={path}
+                                    key={path}
+                                    sx={navStyles}
+                                >
+                                    {title.toUpperCase()}
+                                </ListItem>
+                            ))}
+                        </List>
                 )
                 }
 

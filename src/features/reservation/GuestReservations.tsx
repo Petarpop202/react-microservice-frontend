@@ -16,14 +16,14 @@ export default function GuestReservations() {
     
     useEffect(() => {
 
-        console.log(user);
+        console.log(user?.username);
         if (user?.userRole === "GUEST") {
 
-            agent.Reservation.getReservationsByGuestUsername(user?.userName)
+            agent.Reservation.getReservationsByGuestUsername(user?.username)
                 .then((response) => setReservations(response))
                 .catch((error) => console.log(error))
 
-            agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.userName)
+            agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.username)
                 .then((response) => setReservationRequests(response))
                 .catch((error) => console.log(error))
 
@@ -46,7 +46,7 @@ export default function GuestReservations() {
     const handleReservationDelete = (id : string) => {
         agent.Reservation.deleteReservation(id)
             .then(() => {
-                agent.Reservation.getReservationsByGuestUsername(user?.userName)
+                agent.Reservation.getReservationsByGuestUsername(user?.username)
                 .then((response) => setReservations(response))
                 .catch((error) => console.log(error))
             })
@@ -56,7 +56,7 @@ export default function GuestReservations() {
     const handleReservationRequestDelete = (id : string) => {
         agent.ReservationRequest.deleteReservationRequest(id)
             .then(() => {
-                agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.userName)
+                agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.username)
                 .then((response) => setReservationRequests(response))
                 .catch((error) => console.log(error))
             })

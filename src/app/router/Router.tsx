@@ -25,8 +25,8 @@ export const router = createBrowserRouter([
       { path: "create-accomodation", element: <CreateAccomodation /> },
       { path: "profile", element: <Profile /> },
       { path: 'new-reservation/:id', element: <CreateReservation/> },
-      { path: 'guest-reservations', element: <GuestReservations/> }
-      { path: 'host-reservations', element: <HostReservations/> }
+      { path: 'guest-reservations', element: <GuestReservations/> },
+      { path: 'host-reservations', element: <HostReservations/> },
       { path: "accomodation-details/:id", element: <AccomodationDetails /> },
     ],
   },

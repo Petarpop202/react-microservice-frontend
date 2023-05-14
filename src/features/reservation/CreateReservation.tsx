@@ -48,7 +48,7 @@ export default function CreateReservation() {
             numberOfGuests: resNumberOfGuests,
             status: newStatus,
             accomodationId: accomodation?.id,
-            guestUsername: user?.userName
+            guestUsername: user?.username
         }
 
         agent.ReservationRequest.createReservationRequest(newReservationRequest)
