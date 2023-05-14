@@ -20,6 +20,8 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
       { path: "create-accomodation", element: <CreateAccomodation /> },
       {path: "profile", element: <Profile /> },
+      { path: 'new-reservation/:id', element: <CreateReservation/> }
     ],
   },
+
 ])
