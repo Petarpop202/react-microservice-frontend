@@ -1,20 +1,24 @@
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { store } from "../store/configureStore";
 import axios, { AxiosError, AxiosResponse } from "axios"
+
 /*
 import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import { store } from "../store/configureStore";
 */
 
+
+const responseBody = (response: AxiosResponse) => response.data;
+
 axios.defaults.baseURL = "http://localhost:5069/api/"
 axios.defaults.withCredentials = true
 
-const responseBody = (response: AxiosResponse) => response.data
-/*
 axios.interceptors.request.use(config => {
     const token = store.getState().acount.user?.token;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
-})*/
+})
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
