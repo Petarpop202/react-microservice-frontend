@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { useAppSelector } from "../../app/store/configureStore";
 
 export default function CreateReservation() {
 
     const {id} = useParams();
+    const {user} = useAppSelector(state => state.acount); 
     const [accomodation, setAccomodation] = useState<Accomodation>();
     const navigate = useNavigate();
 
@@ -37,14 +39,16 @@ export default function CreateReservation() {
     const handleSubmit = (event : any) => {
         event.preventDefault();
 
+        let newStatus = accomodation?.isAutomaticConfirm ? 0 : 1;
+
         let newReservationRequest = {
             created: new Date(),
             startDate: resStartDate,
             endDate: resEndDate,
             numberOfGuests: resNumberOfGuests,
-            status: 1,
-            accomodationId: id,
-            guestId: ""
+            status: newStatus,
+            accomodationId: accomodation?.id,
+            guestUsername: user?.username
         }
 
         agent.ReservationRequest.createReservationRequest(newReservationRequest)
@@ -57,8 +61,10 @@ export default function CreateReservation() {
             <Typography gutterBottom variant="h2">
                 Create Reservation
             </Typography>
-            <Typography variant="body1">
-                Accomodation {accomodation?.name} is available from {accomodation?.availableFromDate.toDateString()} to {accomodation?.availableToDate.toDateString()}
+            <Typography variant="h5">
+                Accomodation <b>{accomodation?.name}</b> is available from 
+                <b>{accomodation ? " " + new Date(accomodation.availableFromDate).toLocaleDateString() + " " + new Date(accomodation.availableFromDate).toLocaleTimeString() : ""}</b> to  
+                <b>{accomodation ? " " + new Date(accomodation.availableToDate).toLocaleDateString() + " " + new Date(accomodation.availableToDate).toLocaleTimeString() : ""}</b>
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField

@@ -5,5 +5,5 @@ export interface Reservation {
     endDate: Date,
     numberOfGuests: number,
     accomodationId: string,
-    guestId: string
+    guestUsername: string
 }
