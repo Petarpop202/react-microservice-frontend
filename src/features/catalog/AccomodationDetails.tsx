@@ -17,6 +17,7 @@ import {
 } from "@mui/material"
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
+import { useAppSelector } from "../../app/store/configureStore"
 
 const AccomodationDetails = () => {
   const { id } = useParams<{ id: string }>()
@@ -26,10 +27,10 @@ const AccomodationDetails = () => {
   const [isChangePrice, setIsChangePrice] = useState<boolean>(false)
   const [availableFromDate, setAvailableFromDate] = useState(new Date())
   const [availableToDate, setAvailableToDate] = useState(new Date())
-
+  const { user } = useAppSelector((state) => state.acount)
   useEffect(() => {
     axios
-      .get(`http://localhost:5176/api/Accomodation/${id}`)
+      .get(`https://localhost:7046/api/Accomodation/${id}`)
       .then((response) => setAccomodation(response.data))
       .catch((error) => console.log(error))
   }, [id])
@@ -50,7 +51,7 @@ const AccomodationDetails = () => {
       availableToDate: availableToDate,
     }
     axios
-      .put("http://localhost:5176/api/Accomodation", changeDateDto)
+      .put("https://localhost:7046/api/Accomodation", changeDateDto)
       .then((result) => alert("DATE CHANGED"))
       .catch((error) => console.log(error))
   }
@@ -62,7 +63,7 @@ const AccomodationDetails = () => {
     }
     axios
       .put(
-        "http://localhost:5176/api/Accomodation/change-price",
+        "https://localhost:7046/api/Accomodation/change-price",
         changePriceDto
       )
       .then((result) => alert("PRICE CHANGED"))
@@ -143,48 +144,53 @@ const AccomodationDetails = () => {
                 </TableCell>
                 <TableCell></TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="left"
-                    justifyContent="center"
-                    marginTop="auto"
-                  >
-                    <Button
-                      size="large"
-                      variant="contained"
-                      onClick={() => setIsChangeDate(!isChangeDate)}
+
+              {user?.userRole.toUpperCase() === "HOST" && (
+                <TableRow>
+                  <TableCell>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="left"
+                      justifyContent="center"
+                      marginTop="auto"
                     >
-                      Change available date
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="left"
-                    justifyContent="center"
-                    marginTop="auto"
-                  >
-                    <Button
-                      size="large"
-                      variant="contained"
-                      onClick={() => setIsChangePrice(!isChangePrice)}
+                      <Button
+                        size="large"
+                        variant="contained"
+                        onClick={() => setIsChangeDate(!isChangeDate)}
+                      >
+                        Change available date
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              )}
+              {user?.userRole.toUpperCase() === "HOST" && (
+                <TableRow>
+                  <TableCell>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="left"
+                      justifyContent="center"
+                      marginTop="auto"
                     >
-                      Change price
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
+                      <Button
+                        size="large"
+                        variant="contained"
+                        onClick={() => setIsChangePrice(!isChangePrice)}
+                      >
+                        Change price
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-        {isChangeDate && (
+        {isChangeDate && user?.userRole.toUpperCase() === "HOST" && (
           <>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DateTimePicker
@@ -219,7 +225,7 @@ const AccomodationDetails = () => {
             </Button>
           </>
         )}
-        {isChangePrice && (
+        {isChangePrice && user?.userRole.toUpperCase() === "HOST" && (
           <>
             <TextField
               label="Price"
