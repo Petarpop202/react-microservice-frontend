@@ -10,7 +10,7 @@ import { store } from "../store/configureStore";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
-axios.defaults.baseURL = "http://localhost:5069/api/"
+axios.defaults.baseURL = "https://localhost:5090/api/"
 axios.defaults.withCredentials = true
 
 axios.interceptors.request.use(config => {
@@ -45,6 +45,7 @@ const Flight = {
 
 const Accomodation = {
   getAccomodations: () => requests.get("AccomodationSearch"),
+  getAccomodationsBySearch: (values: any) => requests.get(`AccomodationSearch/getBySearch${values}`),
   getAccomodation: (id: any) => requests.get(`Accomodation/${id}`),
 }
 

@@ -5,9 +5,10 @@ import { Accomodation } from "../../app/models/Accomodation"
 import { useEffect, useState } from "react"
 import agent from "../../app/api/agent"
 import { NavLink } from "react-router-dom"
+import { AccomodationSearch } from "../../app/models/AccomodationSearch"
 
 export default function Catalog() {
-  const [accomodations, setAccomodations] = useState<Accomodation[]>([])
+  const [accomodations, setAccomodations] = useState<AccomodationSearch[]>([])
   const [capacity, setCapacity] = useState<number>(0)
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Catalog() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={3}>
-        <SearchBar />
+        <SearchBar setFilteredFlights={setAccomodations} setTickets={setCapacity}/>
       </Grid>
       <Grid item xs={9}>
         <Button

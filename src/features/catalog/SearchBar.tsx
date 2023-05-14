@@ -12,7 +12,7 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
     const [searchCapacity, setSearchCapacity] = useState("0");
     const [searchDateIn, setSearchDateIn] = useState(new Date());
     const [searchDateOut, setSearchDateOut] = useState(new Date());
-    const [searchPrice, setSearchPrice] = useState("");
+    const [searchPrice, setSearchPrice] = useState("0");
     const [searchPlace, setSearchPlace] = useState("");
   
     const handleSearchCapacityInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
     };
   
     const handleSearchClick = () => {
-      agent.Flight.getBySearch(`?date=${new Date(searchDateIn).toDateString()}&capacity=${Number(searchCapacity)}&from=${searchPrice}&to=${searchPlace}`)
+      agent.Accomodation.getAccomodationsBySearch(`?startDate=${new Date(searchDateIn).toDateString()}&endDate=${new Date(searchDateOut).toDateString()}&capacity=${Number(searchCapacity)}&price=${searchPrice}&place=${searchPlace}`)
         .then(response => {
           setFilteredFlights(response)
           setTickets(searchCapacity)
@@ -46,7 +46,7 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
 
     const handleResetClick = () => {
       resetFields()
-      agent.Flight.getFlights()
+      agent.Accomodation.getAccomodations()
             .then(response => {
               setFilteredFlights(response)
               setTickets(0)
@@ -99,8 +99,10 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
             />
             </LocalizationProvider>
             <TextField
+              type="number"
               label="Price"
               value={searchPrice}
+              InputProps={{ inputProps: { min: 0 } }}
               margin="normal"
               onChange={handleSearchFromInputChange}
               fullWidth

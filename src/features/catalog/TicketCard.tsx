@@ -2,9 +2,10 @@ import { Card, CardMedia, CardContent, Typography, CardActions, Button, CardHead
 import { Accomodation } from "../../app/models/Accomodation";
 import { Link } from "react-router-dom";
 import agent from "../../app/api/agent";
+import { AccomodationSearch } from "../../app/models/AccomodationSearch";
 
 interface Props {
-  accomodation: Accomodation
+  accomodation: AccomodationSearch
   setAccomodations: any
   capacity: number
 }
