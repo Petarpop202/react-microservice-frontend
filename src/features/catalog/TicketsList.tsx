@@ -1,9 +1,10 @@
 import { Grid, List } from "@mui/material";
 import TicketCard from "./TicketCard";
 import { Accomodation } from "../../app/models/Accomodation";
+import { AccomodationSearch } from "../../app/models/AccomodationSearch";
 
 interface Props {
-    accomodations: Accomodation[]
+    accomodations: AccomodationSearch[]
     setAccomodations: any
     capacity: number
 }

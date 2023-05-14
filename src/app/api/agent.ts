@@ -1,20 +1,23 @@
-import axios, { AxiosError, AxiosResponse } from "axios"
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { store } from "../store/configureStore";
+
 /*
 import { toast } from "react-toastify";
 import { router } from "../router/Router";
 import { store } from "../store/configureStore";
 */
 
-axios.defaults.baseURL = "http://localhost:5069/api/"
+
+const responseBody = (response: AxiosResponse) => response.data;
+
+axios.defaults.baseURL = "https://localhost:5090/api/"
 axios.defaults.withCredentials = true
 
-const responseBody = (response: AxiosResponse) => response.data
-/*
 axios.interceptors.request.use(config => {
     const token = store.getState().acount.user?.token;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
-})*/
+})
 
 const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
@@ -43,6 +46,7 @@ const Flight = {
 /*
 const Accomodation = {
   getAccomodations: () => requests.get("AccomodationSearch"),
+  getAccomodationsBySearch: (values: any) => requests.get(`AccomodationSearch/getBySearch${values}`),
   getAccomodation: (id: any) => requests.get(`Accomodation/${id}`),
 }
 */

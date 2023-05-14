@@ -1,5 +1,5 @@
 import { LockOutlined } from "@mui/icons-material";
-import { Container, Paper, Avatar, Typography, Box, TextField, Grid } from "@mui/material";
+import { Container, Paper, Avatar, Typography, Box, TextField, Grid, FormControlLabel, Checkbox, RadioGroup, Radio } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -8,10 +8,13 @@ import { LoadingButton } from "@mui/lab";
 
 export default function Register() {
     const navigate = useNavigate();
-    const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid } } = useForm({
+    const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid }, setValue } = useForm({
         mode: 'onTouched'
     })
-    
+
+    const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue('userRole', event.target.value);
+    };
     
     function handleApiErrors(errors: any) {
         console.log(errors);
@@ -76,6 +79,42 @@ export default function Register() {
                      error={!!errors.password}
                      helperText={errors?.password?.message as string}
                 />
+                <TextField
+                   margin="normal"
+                   required
+                   fullWidth
+                   label="Name"
+                   autoFocus
+                   {...register('name', { required: 'Name is required' })}
+                   error={!!errors.name}
+                   helperText={errors?.name?.message as string}
+                />
+                <TextField
+                   margin="normal"
+                   required
+                   fullWidth
+                   label="Surname"
+                   autoFocus
+                   {...register('surname', { required: 'Surname is required' })}
+                   error={!!errors.surname}
+                   helperText={errors?.surname?.message as string}
+                />
+                <TextField
+                   margin="normal"
+                   required
+                   fullWidth
+                   label="Address"
+                   autoFocus
+                   {...register('address', { required: 'Address is required' })}
+                   error={!!errors.address}
+                   helperText={errors?.address?.message as string}
+                />
+                
+                
+                <RadioGroup aria-label="userRole" name="userRole" defaultValue="guest" onChange={handleRoleChange}>
+                    <FormControlLabel value="HOST" control={<Radio />} label="Host" />
+                    <FormControlLabel value="GUEST" control={<Radio />} label="Guest" />
+                </RadioGroup>
 
                 <LoadingButton loading={isSubmitting} type="submit"
                     disabled={!isValid}
@@ -96,3 +135,4 @@ export default function Register() {
         </Container>
     );
 }
+
