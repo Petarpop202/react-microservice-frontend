@@ -15,6 +15,11 @@ const guestMidLinks = [
     {title: 'reservations', path: '/guest-reservations'}
 ]
 
+const hostMidLinks = [
+    {title: 'catalog', path: '/catalog'},
+    {title: 'reservations', path: '/host-reservations'}
+]
+
 const rightLinks = [
     {title: 'login', path: '/login'},
     {title: 'register', path: '/register'},
@@ -69,19 +74,34 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                         </ListItem>
                     ))}
                 </List>
-                :
-                <List sx={{display: 'flex'}}>
-                    {midLinks.map(({title, path}) =>(
-                        <ListItem
-                            component={NavLink}
-                            to={path}
-                            key={path}
-                            sx={navStyles}
-                        >
-                            {title.toUpperCase()}
-                        </ListItem>
-                    ))}
-                </List>
+                : (
+                    user?.userRole === "HOST" ?
+                        <List sx={{display: 'flex'}}>
+                        {hostMidLinks.map(({title, path}) =>(
+                            <ListItem
+                                component={NavLink}
+                                to={path}
+                                key={path}
+                                sx={navStyles}
+                            >
+                                {title.toUpperCase()}
+                            </ListItem>
+                            ))}
+                        </List>
+                    :
+                    <List sx={{display: 'flex'}}>
+                        {midLinks.map(({title, path}) =>(
+                            <ListItem
+                                component={NavLink}
+                                to={path}
+                                key={path}
+                                sx={navStyles}
+                            >
+                                {title.toUpperCase()}
+                            </ListItem>
+                        ))}
+                    </List>
+                )
                 }
 
                 <Box display='flex' alignItems='center'>

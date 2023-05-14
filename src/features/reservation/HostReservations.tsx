@@ -5,28 +5,32 @@ import { ReservationRequest } from "../../app/models/ReservationRequest";
 import agent from "../../app/api/agent";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/configureStore";
+import { Accomodation } from "../../app/models/Accomodation";
 
-export default function GuestReservations() {
+export default function HostReservations() {
 
     const {user} = useAppSelector(state => state.acount); 
 
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [reservationRequests, setReservationRequests] = useState<ReservationRequest[]>([]);
+    const [selectedAccomodation, setSelectedAccomodation] = useState<Accomodation>();
     const navigate = useNavigate();
     
     useEffect(() => {
+        if (user?.userRole === "HOST") {
+            agent.Accomodation.getAccomodations()
+                .then((response) => {
+                    setSelectedAccomodation(response[0])
+                    
+                    agent.Reservation.getReservationsByAccomodationId(selectedAccomodation?.id)
+                        .then((response) => setReservations(response))
+                        .catch((error) => console.log(error))
 
-        console.log(user);
-        if (user?.userRole === "GUEST") {
-
-            agent.Reservation.getReservationsByGuestUsername(user?.userName)
-                .then((response) => setReservations(response))
+                    agent.ReservationRequest.getReservationRequestsByAccomodationId(selectedAccomodation?.id)
+                        .then((response) => setReservationRequests(response))
+                        .catch((error) => console.log(error))
+                        })
                 .catch((error) => console.log(error))
-
-            agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.userName)
-                .then((response) => setReservationRequests(response))
-                .catch((error) => console.log(error))
-
         }else {
             navigate('/catalog')
         }
@@ -43,30 +47,17 @@ export default function GuestReservations() {
         }
     }
 
-    const handleReservationDelete = (id : string) => {
-        agent.Reservation.deleteReservation(id)
-            .then(() => {
-                agent.Reservation.getReservationsByGuestUsername(user?.userName)
-                .then((response) => setReservations(response))
-                .catch((error) => console.log(error))
+    const handleReservationRequestStatus = (id : string, newStatus: number) => {
+
+        agent.ReservationRequest.getReservationRequest(id)
+            .then((response) => {
+                let updatedReservation : ReservationRequest = response
+                updatedReservation.status = newStatus;
+                agent.ReservationRequest.updateReservationRequest(updatedReservation)
+                    .then((response) => console.log(response))
+                    .catch((error) => console.log(error))
             })
             .catch(error => console.log(error))
-    }
-
-    const handleReservationRequestDelete = (id : string) => {
-        agent.ReservationRequest.deleteReservationRequest(id)
-            .then(() => {
-                agent.ReservationRequest.getReservationRequestsByGuestUsername(user?.userName)
-                .then((response) => setReservationRequests(response))
-                .catch((error) => console.log(error))
-            })
-            .catch(error => console.log(error))
-    }
-
-    const getNextDay = () => {
-        let date = new Date()
-        date.setHours(date.getHours() + 2)
-        return new Date(date.setDate(date.getDate() + 1))
     }
 
     return (
@@ -80,7 +71,6 @@ export default function GuestReservations() {
                     <th>Number of guests</th>
                     <th>Start date</th>
                     <th>End date</th>
-                    <th>Action</th>
                 </thead>
                 <tbody>
                     {reservations.map((res) => (
@@ -89,19 +79,6 @@ export default function GuestReservations() {
                             <td>{res.numberOfGuests}</td>
                             <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
                             <td>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</td>
-                            <td>
-                                {(new Date(res.startDate) > getNextDay()) ?
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        size="large"
-                                        onClick={() => handleReservationDelete(res.id)}
-                                        fullWidth
-                                        >
-                                        Delete
-                                    </Button>
-                                : ""}
-                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -128,15 +105,28 @@ export default function GuestReservations() {
                             <td>{getStatus(res.status)}</td>
                             <td>
                             {(res.status === 1) ? 
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    size="large"
-                                    onClick={() => handleReservationRequestDelete(res.id)}
-                                    fullWidth
-                                    >
-                                    Delete
-                                </Button>
+                                (
+                                    <>
+                                        <Button
+                                            variant="contained"
+                                            color="success"
+                                            size="large"
+                                            onClick={() => handleReservationRequestStatus(res.id, 0)}
+                                            fullWidth
+                                            >
+                                            Approve
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            size="large"
+                                            onClick={() => handleReservationRequestStatus(res.id, 2)}
+                                            fullWidth
+                                            >
+                                            Delete
+                                        </Button>
+                                    </>
+                                )
                             : ""}
                             </td>
                         </tr>

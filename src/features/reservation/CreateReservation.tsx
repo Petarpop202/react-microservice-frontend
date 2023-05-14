@@ -1,16 +1,16 @@
 import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { Accomodation } from "../../app/models/Accomodation";
-import { User } from "../../app/models/User";
 import agent from "../../app/api/agent";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { useAppSelector } from "../../app/store/configureStore";
 
 export default function CreateReservation() {
 
     const {id} = useParams();
-    const [currentUser, setCurrentUser] = useState<User>();
+    const {user} = useAppSelector(state => state.acount); 
     const [accomodation, setAccomodation] = useState<Accomodation>();
     const navigate = useNavigate();
 
@@ -39,18 +39,16 @@ export default function CreateReservation() {
     const handleSubmit = (event : any) => {
         event.preventDefault();
 
-        agent.Account.currentUser()
-            .then(response => setCurrentUser(response))
-            .catch(error => console.log(error))
+        let newStatus = accomodation?.isAutomaticConfirm ? 0 : 1;
 
         let newReservationRequest = {
             created: new Date(),
             startDate: resStartDate,
             endDate: resEndDate,
             numberOfGuests: resNumberOfGuests,
-            status: 1,
-            accomodationId: id,
-            guestUsername: currentUser!.userName
+            status: newStatus,
+            accomodationId: accomodation?.id,
+            guestUsername: user?.userName
         }
 
         agent.ReservationRequest.createReservationRequest(newReservationRequest)
