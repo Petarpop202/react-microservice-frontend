@@ -54,13 +54,13 @@ export default function TicketCard({
         <Typography gutterBottom variant="subtitle2">
           ${accomodation.price} night
         </Typography>
-        {capacity > 1 && (
+        {accomodation.capacity > 1 && (
           <Typography gutterBottom variant="h6">
             ${accomodation.price * capacity} for {capacity} visitors
           </Typography>
         )}
         <Typography variant="subtitle1">
-          Capacity: <b>{capacity}</b> visitors
+          Capacity: <b>{accomodation.capacity}</b> visitors
         </Typography>
         <Typography variant="subtitle1">
           Description: {accomodation.description}
