@@ -8,6 +8,7 @@ import App from "../layout/App"
 import { CreateAccomodation } from "../../features/create-accomodation/CreateAccomodation"
 import Profile from "../../features/account/Profile"
 import CreateReservation from "../../features/reservation/CreateReservation"
+import AccomodationDetails from "../../features/catalog/AccomodationDetails"
 
 export const router = createBrowserRouter([
   {
@@ -21,8 +22,8 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
       { path: "create-accomodation", element: <CreateAccomodation /> },
       { path: "profile", element: <Profile /> },
-      { path: 'new-reservation/:id', element: <CreateReservation/> }
+      { path: "new-reservation/:id", element: <CreateReservation /> },
+      { path: "accomodation-details/:id", element: <AccomodationDetails /> },
     ],
   },
-
 ])
