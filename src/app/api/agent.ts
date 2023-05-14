@@ -38,13 +38,32 @@ const Flight = {
 }
 
 const Accomodation = {
-    getAccomodations: () => requests.get('AccomodationSearch')
+    getAccomodations: () => requests.get('AccomodationSearch'),
+    getAccomodation : (id: any) => requests.get(`Accomodation/${id}`),
+}
+
+const ReservationRequest = {
+    getReservationRequests: () => requests.get('ReservationRequest'),
+    getReservationRequest: (id: any) => requests.get(`ReservationRequest/${id}`),
+    createReservationRequest: (reservationRequest: any) => requests.post(`ReservationRequest`, reservationRequest),
+    updateReservationRequest: (reservationRequest: any) => requests.put(`ReservationRequest/${reservationRequest.id}`, reservationRequest),
+    deleteReservationRequest: (id: any) => requests.delete(`ReservationRequest/${id}`)
+}
+
+const Reservation = {
+    getReservations: () => requests.get('Reservation'),
+    getReservation: (id: any) => requests.get(`Reservation/${id}`),
+    createReservation: (reservation: any) => requests.post(`Reservation`, reservation),
+    updateReservation: (reservation: any) => requests.put(`Reservation/${reservation.id}`, reservation),
+    deleteReservation: (id: any) => requests.delete(`Reservation/${id}`)
 }
 
 const agent = {
     Account,
     Flight,
-    Accomodation
+    Accomodation,
+    ReservationRequest,
+    Reservation
 }
 
 export default agent;
