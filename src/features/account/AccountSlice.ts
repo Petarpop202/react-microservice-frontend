@@ -21,6 +21,7 @@ export const signInUser = createAsyncThunk<User,  FieldValues>(
             const user = await agent.Account.login(data);
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('userRole', JSON.stringify(user.userRole));
+            localStorage.setItem('userName', JSON.stringify(user.username));
             return user;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
@@ -36,6 +37,7 @@ export const fetchCurrentUser = createAsyncThunk<User>(
             const user = await agent.Account.currentUser();
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('userRole', JSON.stringify(user.userRole));
+            localStorage.setItem('userName', JSON.stringify(user.username));
             return user;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
@@ -56,6 +58,7 @@ export const accountSlice = createSlice({
             state.user = null;
             localStorage.removeItem('user');
             localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
             router.navigate('/');
         },
         setUser: (state, action) => {
@@ -67,6 +70,7 @@ export const accountSlice = createSlice({
             state.user = null;
             localStorage.removeItem('user');
             localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
             toast.error('Session expired - please login again');
             router.navigate('/');
         })
