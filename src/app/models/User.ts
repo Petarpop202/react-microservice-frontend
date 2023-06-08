@@ -8,5 +8,4 @@ export interface User {
     surname: string;
     address: string;
     password: string;
-    username: string;
 }

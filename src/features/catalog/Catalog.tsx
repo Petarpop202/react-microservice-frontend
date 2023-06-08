@@ -11,6 +11,7 @@ import { useAppSelector } from "../../app/store/configureStore"
 export default function Catalog() {
   const [accomodations, setAccomodations] = useState<AccomodationSearch[]>([])
   const [capacity, setCapacity] = useState<number>(0)
+  const { user } = useAppSelector((state) => state.acount)
   useEffect(() => {
     agent.Accomodation.getAccomodations()
       .then((response) => setAccomodations(response))
@@ -26,16 +27,19 @@ export default function Catalog() {
         />
       </Grid>
       <Grid item xs={9}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          sx={{ mb: 3 }}
-          component={NavLink}
-          to="/create-accomodation"
-        >
-          Create flight
-        </Button>
+        {user?.userRole.toUpperCase() === "HOST" && (
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ mb: 3 }}
+            component={NavLink}
+            to="/create-accomodation"
+          >
+            Create accomodation
+          </Button>
+        )}
+
         <TicketsList
           accomodations={accomodations}
           setAccomodations={setAccomodations}

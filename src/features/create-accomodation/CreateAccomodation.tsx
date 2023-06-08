@@ -73,7 +73,7 @@ export const CreateAccomodation = () => {
       isAutomaticConfirm: isAutomaticConfirm,
     }
     axios
-      .post("http://localhost:5176/api/Accomodation", newAccomodation)
+      .post("https://localhost:7046/api/Accomodation", newAccomodation)
       .then((response) => console.log(response.data))
       .catch((error) => console.log(error))
   }
