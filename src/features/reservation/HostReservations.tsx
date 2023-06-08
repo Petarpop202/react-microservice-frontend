@@ -5,7 +5,6 @@ import { ReservationRequest } from "../../app/models/ReservationRequest";
 import agent from "../../app/api/agent";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/configureStore";
-import { Accomodation } from "../../app/models/Accomodation";
 
 export default function HostReservations() {
 
@@ -13,23 +12,16 @@ export default function HostReservations() {
 
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [reservationRequests, setReservationRequests] = useState<ReservationRequest[]>([]);
-    const [selectedAccomodation, setSelectedAccomodation] = useState<Accomodation>();
     const navigate = useNavigate();
     
     useEffect(() => {
         if (user?.userRole === "HOST") {
-            agent.Accomodation.getAllAccomodations()
-                .then((response) => {
-                    setSelectedAccomodation(response[0])
-                    console.log(response[0].id)
-                    agent.Reservation.getReservationsByAccomodationId(response[0].id)
-                        .then((response) => setReservations(response))
-                        .catch((error) => console.log(error))
+            agent.Reservation.getReservations()
+                .then((response) => setReservations(response))
+                .catch((error) => console.log(error))
 
-                    agent.ReservationRequest.getReservationRequestsByAccomodationId(response[0].id)
-                        .then((response) => setReservationRequests(response))
-                        .catch((error) => console.log(error))
-                        })
+            agent.ReservationRequest.getReservationRequests()
+                .then((response) => setReservationRequests(response))
                 .catch((error) => console.log(error))
         }else {
             navigate('/catalog')
@@ -48,16 +40,23 @@ export default function HostReservations() {
     }
 
     const handleReservationRequestStatus = (id : string, newStatus: number) => {
-
         agent.ReservationRequest.getReservationRequest(id)
             .then((response) => {
                 let updatedReservation : ReservationRequest = response
                 updatedReservation.status = newStatus;
                 agent.ReservationRequest.updateReservationRequest(updatedReservation)
-                    .then((response) => console.log(response))
+                    .then(() => {
+                            agent.Reservation.getReservations()
+                                .then((response) => setReservations(response))
+                                .catch((error) => console.log(error))
+
+                            agent.ReservationRequest.getReservationRequests()
+                                .then((response) => setReservationRequests(response))
+                                .catch((error) => console.log(error))
+                        })
                     .catch((error) => console.log(error))
             })
-            .catch(error => console.log(error))
+            .catch((error) => console.log(error))
     }
 
     return (
@@ -67,6 +66,7 @@ export default function HostReservations() {
             </Typography>     
             <table>
                 <thead>
+                    <th>Guest</th>
                     <th>Created</th>
                     <th>Number of guests</th>
                     <th>Start date</th>
@@ -75,6 +75,7 @@ export default function HostReservations() {
                 <tbody>
                     {reservations.map((res) => (
                         <tr key={res.id}>
+                            <td>{res.guestUsername}</td>
                             <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
                             <td>{res.numberOfGuests}</td>
                             <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
@@ -88,6 +89,7 @@ export default function HostReservations() {
             </Typography> 
             <table>
                 <thead>
+                    <th>Guest</th>
                     <th>Created</th>
                     <th>Number of guests</th>
                     <th>Start date</th>
@@ -98,6 +100,7 @@ export default function HostReservations() {
                 <tbody>
                     {reservationRequests.map((res) => (
                         <tr key={res.id}>
+                            <td>{res.guestUsername}</td>
                             <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
                             <td>{res.numberOfGuests}</td>
                             <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
@@ -123,7 +126,7 @@ export default function HostReservations() {
                                             onClick={() => handleReservationRequestStatus(res.id, 2)}
                                             fullWidth
                                             >
-                                            Delete
+                                            Reject
                                         </Button>
                                     </>
                                 )
