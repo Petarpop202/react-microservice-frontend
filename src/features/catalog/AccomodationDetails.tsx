@@ -30,7 +30,7 @@ const AccomodationDetails = () => {
   const { user } = useAppSelector((state) => state.acount)
   useEffect(() => {
     axios
-      .get(`https://localhost:7046/api/Accomodation/${id}`)
+      .get(`http://localhost:8001/api/Accomodation/${id}`)
       .then((response) => setAccomodation(response.data))
       .catch((error) => console.log(error))
   }, [id])
@@ -51,7 +51,7 @@ const AccomodationDetails = () => {
       availableToDate: availableToDate,
     }
     axios
-      .put("https://localhost:7046/api/Accomodation", changeDateDto)
+      .put("http://localhost:8001/api/Accomodation", changeDateDto)
       .then((result) => alert("DATE CHANGED"))
       .catch((error) => console.log(error))
   }
@@ -63,7 +63,7 @@ const AccomodationDetails = () => {
     }
     axios
       .put(
-        "https://localhost:7046/api/Accomodation/change-price",
+        "http://localhost:8001/api/Accomodation/change-price",
         changePriceDto
       )
       .then((result) => alert("PRICE CHANGED"))

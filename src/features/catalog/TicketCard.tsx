@@ -35,10 +35,10 @@ export default function TicketCard({
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: "primary.main" }}>
-            {accomodation.name[0]}
+            {accomodation!.name[0]}
           </Avatar>
         }
-        title={`${accomodation.name}`}
+        title={`${accomodation!.name}`}
         titleTypographyProps={{
           sx: { fontWeight: "bold", color: "primary.dark" },
         }}
@@ -49,21 +49,21 @@ export default function TicketCard({
       />
       <CardContent>
         <Typography gutterBottom variant="h5">
-          {accomodation.address.city}
+          {accomodation!.address.city}
         </Typography>
         <Typography gutterBottom variant="subtitle2">
-          ${accomodation.price} night
+          ${accomodation!.price} night
         </Typography>
-        {accomodation.capacity > 1 && (
+        {accomodation!.capacity > 1 && (
           <Typography gutterBottom variant="h6">
-            ${accomodation.price * capacity} for {capacity} visitors
+            ${accomodation!.price * capacity} for {capacity} visitors
           </Typography>
         )}
         <Typography variant="subtitle1">
-          Capacity: <b>{accomodation.capacity}</b> visitors
+          Capacity: <b>{accomodation!.capacity}</b> visitors
         </Typography>
         <Typography variant="subtitle1">
-          Description: {accomodation.description}
+          Description: {accomodation!.description}
         </Typography>
         <Typography variant="body1" color="text.secondary">
           <></>
@@ -73,14 +73,14 @@ export default function TicketCard({
         <Button
           size="small"
           component={Link}
-          to={`/new-reservation/${accomodation.id}`}
+          to={`/new-reservation/${accomodation!.id}`}
         >
           Reserve
         </Button>
         <Button
           size="small"
           component={Link}
-          to={`/accomodation-details/${accomodation.id}`}
+          to={`/accomodation-details/${accomodation!.id}`}
         >
           View more
         </Button>
