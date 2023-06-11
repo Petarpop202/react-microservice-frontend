@@ -1,4 +1,4 @@
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Reservation } from "../../app/models/Reservation";
 import { ReservationRequest } from "../../app/models/ReservationRequest";
@@ -15,8 +15,6 @@ export default function GuestReservations() {
     const navigate = useNavigate();
     
     useEffect(() => {
-
-        console.log(user?.username);
         if (user?.userRole === "GUEST") {
 
             agent.Reservation.getReservationsByGuestUsername(user?.username)
@@ -74,22 +72,24 @@ export default function GuestReservations() {
             <Typography variant="h3">
                 My reservations
             </Typography>     
-            <table>
-                <thead>
-                    <th>Created</th>
-                    <th>Number of guests</th>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
+            {reservations.length > 0 ? <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Created</TableCell>
+                        <TableCell>Number of guests</TableCell>
+                        <TableCell>Start date</TableCell>
+                        <TableCell>End date</TableCell>
+                        <TableCell>Action</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {reservations.map((res) => (
-                        <tr key={res.id}>
-                            <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
-                            <td>{res.numberOfGuests}</td>
-                            <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
-                            <td>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</td>
-                            <td>
+                        <TableRow key={res.id}>
+                            <TableCell>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</TableCell>
+                            <TableCell>{res.numberOfGuests}</TableCell>
+                            <TableCell>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>
                                 {(new Date(res.startDate) > getNextDay()) ?
                                     <Button
                                         variant="contained"
@@ -101,32 +101,35 @@ export default function GuestReservations() {
                                         Delete
                                     </Button>
                                 : ""}
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
+            : <Typography variant="subtitle1">No reservations</Typography>}
             <Typography variant="h3" sx={{mt: 4}}>
                 My reservation requests
             </Typography> 
-            <table>
-                <thead>
-                    <th>Created</th>
-                    <th>Number of guests</th>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
+            {reservationRequests.length ? <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Created</TableCell>
+                        <TableCell>Number of guests</TableCell>
+                        <TableCell>Start date</TableCell>
+                        <TableCell>End date</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Action</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {reservationRequests.map((res) => (
-                        <tr key={res.id}>
-                            <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
-                            <td>{res.numberOfGuests}</td>
-                            <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
-                            <td>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</td>
-                            <td>{getStatus(res.status)}</td>
-                            <td>
+                        <TableRow key={res.id}>
+                            <TableCell>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</TableCell>
+                            <TableCell>{res.numberOfGuests}</TableCell>
+                            <TableCell>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{getStatus(res.status)}</TableCell>
+                            <TableCell>
                             {(res.status === 1) ? 
                                 <Button
                                     variant="contained"
@@ -138,11 +141,13 @@ export default function GuestReservations() {
                                     Delete
                                 </Button>
                             : ""}
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
+            :
+            <Typography variant="subtitle1">No reservation requests</Typography>}
         </Paper>
     )
 }
