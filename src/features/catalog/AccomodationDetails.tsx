@@ -14,12 +14,15 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material"
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { useAppSelector } from "../../app/store/configureStore"
@@ -148,6 +151,18 @@ const AccomodationDetails = () => {
     }
   }
 
+  const deleteGrade = () => {
+    if (userGrade !== null) {
+      agent.AccomodationGrade.deleteGrade(userGrade!.id)
+        .then((response) => {
+          toast.success("Your grade was deleted!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={6}>
@@ -207,7 +222,7 @@ const AccomodationDetails = () => {
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Rating</TableCell>
+                <TableCell>Average Rating</TableCell>
                 <TableCell><Rating readOnly value={averageGrade} precision={0.5}></Rating></TableCell>
               </TableRow>
               {canGrade && 
@@ -221,8 +236,9 @@ const AccomodationDetails = () => {
                       justifyContent="left"
                     >
                       <Rating value={selectedGrade} onChange={(event, newValue) => {setSelectedGrade(newValue!);}}></Rating>
-                      <IconButton size="small" color="success" disabled={selectedGrade == 0} onClick={createOrUpdateGrade}><CheckIcon/></IconButton>
-                      <IconButton size="small" color="error" disabled={selectedGrade == 0} onClick={() => setSelectedGrade(0)}><CloseIcon/></IconButton>
+                      <Tooltip title="Confirm"><IconButton size="small" color="success" disabled={selectedGrade == 0} onClick={createOrUpdateGrade}><CheckIcon/></IconButton></Tooltip>
+                      <Tooltip title="Cancel"><IconButton size="small" color="error" disabled={selectedGrade == 0} onClick={() => setSelectedGrade(0)}><CloseIcon/></IconButton></Tooltip>
+                      <Tooltip title="Delete"><IconButton size="small" color="error" disabled={userGrade == null} onClick={deleteGrade}><DeleteIcon/></IconButton></Tooltip>
                     </Box>
                   </TableCell>
                 </TableRow>
@@ -343,6 +359,25 @@ const AccomodationDetails = () => {
             </Button>
           </>
         )}
+        <Typography variant="h5" sx={{mt: 4}}>Ratings</Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Guest</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Rating</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {grades.map((grade) => (
+              <TableRow key={grade.id}>
+                  <TableCell>{grade.guestUsername}</TableCell>
+                  <TableCell>{new Date(grade.created).toLocaleDateString() + " " + new Date(grade.created).toLocaleTimeString()}</TableCell>
+                  <TableCell><Rating value={grade.value} readOnly></Rating></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Grid>
     </Grid>
   )
