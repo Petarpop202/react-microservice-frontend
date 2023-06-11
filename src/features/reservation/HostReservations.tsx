@@ -1,4 +1,4 @@
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, Paper, Tab, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Reservation } from "../../app/models/Reservation";
 import { ReservationRequest } from "../../app/models/ReservationRequest";
@@ -64,49 +64,54 @@ export default function HostReservations() {
             <Typography variant="h3">
                 Reservations
             </Typography>     
-            <table>
-                <thead>
-                    <th>Guest</th>
-                    <th>Created</th>
-                    <th>Number of guests</th>
-                    <th>Start date</th>
-                    <th>End date</th>
-                </thead>
-                <tbody>
+            {reservations.length ? <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Guest</TableCell>
+                        <TableCell>Created</TableCell>
+                        <TableCell>Number of guests</TableCell>
+                        <TableCell>Start date</TableCell>
+                        <TableCell>End date</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {reservations.map((res) => (
-                        <tr key={res.id}>
-                            <td>{res.guestUsername}</td>
-                            <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
-                            <td>{res.numberOfGuests}</td>
-                            <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
-                            <td>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</td>
-                        </tr>
+                        <TableRow key={res.id}>
+                            <TableCell>{res.guestUsername}</TableCell>
+                            <TableCell>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</TableCell>
+                            <TableCell>{res.numberOfGuests}</TableCell>
+                            <TableCell>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
+            : <Typography variant="subtitle1">No reservations</Typography>}
             <Typography variant="h3" sx={{mt: 4}}>
                 Reservation requests
             </Typography> 
-            <table>
-                <thead>
-                    <th>Guest</th>
-                    <th>Created</th>
-                    <th>Number of guests</th>
-                    <th>Start date</th>
-                    <th>End date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
+            {reservationRequests.length ? <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Guest</TableCell>
+                        <TableCell>Created</TableCell>
+                        <TableCell>Number of guests</TableCell>
+                        <TableCell>Start date</TableCell>
+                        <TableCell>End date</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Action</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {reservationRequests.map((res) => (
-                        <tr key={res.id}>
-                            <td>{res.guestUsername}</td>
-                            <td>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</td>
-                            <td>{res.numberOfGuests}</td>
-                            <td>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</td>
-                            <td>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</td>
-                            <td>{getStatus(res.status)}</td>
-                            <td>
+                        <TableRow key={res.id}>
+                            <TableCell>{res.guestUsername}</TableCell>
+                            <TableCell>{new Date(res.created).toLocaleDateString() + " " + new Date(res.created).toLocaleTimeString()}</TableCell>
+                            <TableCell>{res.numberOfGuests}</TableCell>
+                            <TableCell>{new Date(res.startDate).toLocaleDateString() + " " + new Date(res.startDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{new Date(res.endDate).toLocaleDateString() + " " + new Date(res.endDate).toLocaleTimeString()}</TableCell>
+                            <TableCell>{getStatus(res.status)}</TableCell>
+                            <TableCell>
                             {(res.status === 1) ? 
                                 (
                                     <>
@@ -131,11 +136,12 @@ export default function HostReservations() {
                                     </>
                                 )
                             : ""}
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
+            : <Typography variant="subtitle1">No reservation requests</Typography>}
         </Paper>
     )
 }
