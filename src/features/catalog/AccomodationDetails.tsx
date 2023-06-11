@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom"
 import { Accomodation } from "../../app/models/Accomodation"
+import { AccomodationGrade } from "../../app/models/AccomodationGrade"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import {
@@ -7,6 +8,7 @@ import {
   Button,
   Divider,
   Grid,
+  Rating,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +20,7 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { useAppSelector } from "../../app/store/configureStore"
+import agent from "../../app/api/agent"
 
 const AccomodationDetails = () => {
   const { id } = useParams<{ id: string }>()
@@ -27,12 +30,23 @@ const AccomodationDetails = () => {
   const [isChangePrice, setIsChangePrice] = useState<boolean>(false)
   const [availableFromDate, setAvailableFromDate] = useState(new Date())
   const [availableToDate, setAvailableToDate] = useState(new Date())
+  const [grades, setGrades] = useState<AccomodationGrade[]>([])
+  const [averageGrade, setAverageGrade] = useState<number>(0)
   const { user } = useAppSelector((state) => state.acount)
   useEffect(() => {
     axios
       .get(`http://localhost:8001/api/Accomodation/${id}`)
       .then((response) => setAccomodation(response.data))
       .catch((error) => console.log(error))
+
+    agent.AccomodationGrade.getByAccomodationId(id)
+      .then((response) => {
+        setGrades(response)
+        getAverageGrade(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }, [id])
 
   if (!accomodation) return <h3>Accomodation not found!</h3>
@@ -68,6 +82,12 @@ const AccomodationDetails = () => {
       )
       .then((result) => alert("PRICE CHANGED"))
       .catch((error) => console.log(error))
+  }
+
+  const getAverageGrade = (grades: AccomodationGrade[]) => {
+    let sum = 0
+    grades.forEach(grade => sum += grade.value)
+    setAverageGrade(sum/grades.length)
   }
 
   return (
@@ -127,6 +147,10 @@ const AccomodationDetails = () => {
                 <TableCell>
                   {new Date(accomodation.availableToDate).toLocaleDateString()}
                 </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Rating</TableCell>
+                <TableCell><Rating readOnly value={averageGrade} precision={0.5}></Rating></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>

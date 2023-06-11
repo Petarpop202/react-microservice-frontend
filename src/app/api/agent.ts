@@ -58,6 +58,17 @@ const Accomodation = {
     getAllAccomodations: () => requests.get(`Accomodation`),
 }
 
+const AccomodationGrade = {
+  getGrades: () => requests.get("AccomodationGrade"),
+  getById: (id: any) => requests.get(`AccomodationGrade/${id}`),
+  getByGuestUsername: (username: string) => requests.get(`AccomodationGrade/getByGuest/${username}`),
+  getByAccomodationId: (id: any) => requests.get(`AccomodationGrade/getByAccomodation/${id}`),
+  getByGuestAndAccomodation: (username: string, id: any) => requests.get(`AccomodationGrade/getByGuestAndAccomodation/${username}/${id}`),
+  createGrade: (grade: any) => requests.post("AccomodationGrade", grade),
+  updateGrade: (id: any, grade: any) => requests.put(`AccomodationGrade/${id}`, grade),
+  deleteGrade: (id: any) => requests.delete(`AccomodationGrade/${id}`)
+}
+
 
 // const ReservationRequest = {
 //   getReservationRequests: () => requests.get("ReservationRequest"),
@@ -102,12 +113,14 @@ const ReservationRequest = {
     createReservation: (reservation: any) => requests.post(`Reservation`, reservation),
     updateReservation: (reservation: any) => requests.put(`Reservation/${reservation.id}`, reservation),
     deleteReservation: (id: any) => requests.delete(`Reservation/${id}`),
+    canGuestGradeAccomodation: (username: string, accomodationId: any) => requests.get(`Reservation/canGuestGradeAccomodation/${username}/${accomodationId}`),
   }
 
 const agent = {
   Account,
   Flight,
   Accomodation,
+  AccomodationGrade,
   ReservationRequest,
   Reservation,
 }
