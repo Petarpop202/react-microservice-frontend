@@ -8,6 +8,7 @@ import {
   Button,
   Divider,
   Grid,
+  IconButton,
   Rating,
   Table,
   TableBody,
@@ -17,10 +18,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material"
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { useAppSelector } from "../../app/store/configureStore"
 import agent from "../../app/api/agent"
+import { toast } from "react-toastify"
 
 const AccomodationDetails = () => {
   const { id } = useParams<{ id: string }>()
@@ -32,7 +36,11 @@ const AccomodationDetails = () => {
   const [availableToDate, setAvailableToDate] = useState(new Date())
   const [grades, setGrades] = useState<AccomodationGrade[]>([])
   const [averageGrade, setAverageGrade] = useState<number>(0)
+  const [canGrade, setCanGrade] = useState<boolean>(false)
+  const [selectedGrade, setSelectedGrade] = useState<number>(0)
+  const [userGrade, setUserGrade] = useState<AccomodationGrade>()
   const { user } = useAppSelector((state) => state.acount)
+
   useEffect(() => {
     axios
       .get(`http://localhost:8001/api/Accomodation/${id}`)
@@ -42,12 +50,36 @@ const AccomodationDetails = () => {
     agent.AccomodationGrade.getByAccomodationId(id)
       .then((response) => {
         setGrades(response)
-        getAverageGrade(response)
       })
       .catch((error) => {
         console.log(error)
       })
   }, [id])
+
+  useEffect(() => {
+    agent.Reservation.canGuestGradeAccomodation(user?.username!, id)
+      .then((response) => {
+        setCanGrade(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+    agent.AccomodationGrade.getByGuestAndAccomodation(user?.username!, id)
+      .then((response) => {
+        setUserGrade(response[0])
+        setSelectedGrade(response[0].value)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [user])
+
+  useEffect(() => {
+    let sum = 0
+    grades.forEach(grade => sum += grade.value)
+    setAverageGrade(sum/grades.length)
+  }, [grades])
 
   if (!accomodation) return <h3>Accomodation not found!</h3>
   const handleAvailableFromDateChange = (value: any) => {
@@ -84,10 +116,36 @@ const AccomodationDetails = () => {
       .catch((error) => console.log(error))
   }
 
-  const getAverageGrade = (grades: AccomodationGrade[]) => {
-    let sum = 0
-    grades.forEach(grade => sum += grade.value)
-    setAverageGrade(sum/grades.length)
+  const createOrUpdateGrade = () => {
+    if (!canGrade){
+      return
+    }
+
+    let grade = userGrade
+    if (userGrade == null) {
+      grade = {
+        accomodationId: id!,
+        guestUsername: user?.username!,
+        value: selectedGrade,
+        created: new Date()
+      }
+      agent.AccomodationGrade.createGrade(grade)
+        .then((response) => {
+          toast.success("Your rating has been saved!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }else {
+      grade!.value = selectedGrade
+      agent.AccomodationGrade.updateGrade(userGrade.id, grade)
+        .then((response) => {
+          toast.success("Your rating has been updated!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }
 
   return (
@@ -152,6 +210,23 @@ const AccomodationDetails = () => {
                 <TableCell>Rating</TableCell>
                 <TableCell><Rating readOnly value={averageGrade} precision={0.5}></Rating></TableCell>
               </TableRow>
+              {canGrade && 
+                <TableRow>
+                  <TableCell>My rating</TableCell>
+                  <TableCell>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="left"
+                    >
+                      <Rating value={selectedGrade} onChange={(event, newValue) => {setSelectedGrade(newValue!);}}></Rating>
+                      <IconButton size="small" color="success" disabled={selectedGrade == 0} onClick={createOrUpdateGrade}><CheckIcon/></IconButton>
+                      <IconButton size="small" color="error" disabled={selectedGrade == 0} onClick={() => setSelectedGrade(0)}><CloseIcon/></IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              }
               <TableRow>
                 <TableCell>
                   <Box

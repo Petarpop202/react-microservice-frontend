@@ -1,5 +1,5 @@
 export interface AccomodationGrade {
-    id: string,
+    id?: string,
     accomodationId: string,
     guestUsername: string,
     value: number,
