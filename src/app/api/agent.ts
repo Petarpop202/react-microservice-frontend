@@ -69,6 +69,17 @@ const AccomodationGrade = {
   deleteGrade: (id: any) => requests.delete(`AccomodationGrade/${id}`)
 }
 
+const HostGrade = {
+  getGrades: () => requests.get("HostGrade"),
+  getById: (id: any) => requests.get(`HostGrade/${id}`),
+  getByGuestUsername: (username: string) => requests.get(`HostGrade/getByGuest/${username}`),
+  getByHostId: (id: any) => requests.get(`HostGrade/getByHost/${id}`),
+  getByGuestAndHost: (username: string, id: any) => requests.get(`HostGrade/getByGuestAndHost/${username}/${id}`),
+  createGrade: (grade: any) => requests.post("HostGrade", grade),
+  updateGrade: (id: any, grade: any) => requests.put(`HostGrade/${id}`, grade),
+  deleteGrade: (id: any) => requests.delete(`HostGrade/${id}`)
+}
+
 
 // const ReservationRequest = {
 //   getReservationRequests: () => requests.get("ReservationRequest"),
@@ -123,6 +134,7 @@ const agent = {
   AccomodationGrade,
   ReservationRequest,
   Reservation,
+  HostGrade
 }
 
 export default agent
