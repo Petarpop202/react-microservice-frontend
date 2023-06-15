@@ -28,26 +28,35 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { useAppSelector } from "../../app/store/configureStore"
 import agent from "../../app/api/agent"
 import { toast } from "react-toastify"
+import { HostGrade } from "../../app/models/HostGrade"
 
 const AccomodationDetails = () => {
   const { id } = useParams<{ id: string }>()
   const [accomodation, setAccomodation] = useState<Accomodation | null>(null)
+  const [hostId, setHostId] = useState('')
   const [isChangeDate, setIsChangeDate] = useState<boolean>(false)
   const [price, setPrice] = useState<number>(0)
   const [isChangePrice, setIsChangePrice] = useState<boolean>(false)
   const [availableFromDate, setAvailableFromDate] = useState(new Date())
   const [availableToDate, setAvailableToDate] = useState(new Date())
   const [grades, setGrades] = useState<AccomodationGrade[]>([])
+  const [hostGrades, setHostGrades] = useState<HostGrade[]>([])
   const [averageGrade, setAverageGrade] = useState<number>(0)
+  const [averageHostGrade, setAverageHostGrade] = useState<number>(0)
   const [canGrade, setCanGrade] = useState<boolean>(false)
   const [selectedGrade, setSelectedGrade] = useState<number>(0)
+  const [selectedHostGrade, setSelectedHostGrade] = useState<number>(0)
   const [userGrade, setUserGrade] = useState<AccomodationGrade>()
+  const [hostGrade, setHostGrade] = useState<HostGrade>()
   const { user } = useAppSelector((state) => state.acount)
 
   useEffect(() => {
     axios
       .get(`http://localhost:8001/api/Accomodation/${id}`)
-      .then((response) => setAccomodation(response.data))
+      .then((response) => {
+        setAccomodation(response.data)
+        setHostId(response.data.hostId)
+      })
       .catch((error) => console.log(error))
 
     agent.AccomodationGrade.getByAccomodationId(id)
@@ -57,7 +66,37 @@ const AccomodationDetails = () => {
       .catch((error) => {
         console.log(error)
       })
+
+      axios
+      .get(`http://localhost:8001/api/Accomodation/${id}`)
+      .then((response) => {
+        agent.HostGrade.getByHostId(response.data.hostId)
+        .then((response) => {
+          setHostGrades(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      })
+      .catch((error) => console.log(error))
+    
   }, [id])
+
+  useEffect(() => {
+     axios
+      .get(`http://localhost:8001/api/Accomodation/${id}`)
+      .then((response) => {
+        agent.HostGrade.getByHostId(response.data.hostId)
+        .then((response) => {
+          setHostGrades(response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      })
+      .catch((error) => console.log(error))
+    
+  }, [hostId])
 
   useEffect(() => {
     agent.Reservation.canGuestGradeAccomodation(user?.username!, id)
@@ -76,6 +115,21 @@ const AccomodationDetails = () => {
       .catch((error) => {
         console.log(error)
       })
+
+    axios
+      .get(`http://localhost:8001/api/Accomodation/${id}`)
+      .then((response) => {
+          agent.HostGrade.getByGuestAndHost(user?.username!, response.data.hostId)
+        .then((response) => {
+          setHostGrade(response[0])
+          setSelectedHostGrade(response[0].value)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      })
+      .catch((error) => console.log(error))
+    
   }, [user])
 
   useEffect(() => {
@@ -83,6 +137,13 @@ const AccomodationDetails = () => {
     grades.forEach(grade => sum += grade.value)
     setAverageGrade(sum/grades.length)
   }, [grades])
+
+  useEffect(() => {    
+    let sum = 0
+    hostGrades.forEach(grade => sum += grade.value)
+    setAverageHostGrade(sum/hostGrades.length)
+    console.log(averageHostGrade)
+  }, [hostGrades])
 
   if (!accomodation) return <h3>Accomodation not found!</h3>
   const handleAvailableFromDateChange = (value: any) => {
@@ -151,9 +212,53 @@ const AccomodationDetails = () => {
     }
   }
 
+  const createOrUpdateHostGrade = () => {
+    if (!canGrade){
+      return
+    }
+
+    let grade = hostGrade
+    if (hostGrade == null) {
+      grade = {
+        hostId: accomodation?.hostId!,
+        guestUsername: user?.username!,
+        value: selectedHostGrade,
+        created: new Date()
+      }
+      agent.HostGrade.createGrade(grade)
+        .then((response) => {
+          toast.success("Your rating has been saved!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }else {
+      grade!.value = selectedHostGrade
+      agent.HostGrade.updateGrade(hostGrade.id, grade)
+        .then((response) => {
+          toast.success("Your rating has been updated!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+
   const deleteGrade = () => {
     if (userGrade !== null) {
       agent.AccomodationGrade.deleteGrade(userGrade!.id)
+        .then((response) => {
+          toast.success("Your grade was deleted!")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+
+  const deleteHostGrade = () => {
+    if (hostGrade !== null) {
+      agent.HostGrade.deleteGrade(hostGrade!.id)
         .then((response) => {
           toast.success("Your grade was deleted!")
         })
@@ -187,6 +292,28 @@ const AccomodationDetails = () => {
         <TableContainer>
           <Table>
             <TableBody sx={{ fontSize: "1.1em" }}>
+              <TableRow>
+                <TableCell>Average Host Rating</TableCell>
+                <TableCell><Rating readOnly value={averageHostGrade} precision={0.5}></Rating></TableCell>
+              </TableRow>
+              {canGrade && 
+                <TableRow>
+                  <TableCell>Host rating</TableCell>
+                  <TableCell>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="left"
+                    >
+                      <Rating value={selectedHostGrade} onChange={(event, newValue) => {setSelectedHostGrade(newValue!);}}></Rating>
+                      <Tooltip title="Confirm"><IconButton size="small" color="success" disabled={selectedHostGrade == 0} onClick={createOrUpdateHostGrade}><CheckIcon/></IconButton></Tooltip>
+                      <Tooltip title="Cancel"><IconButton size="small" color="error" disabled={selectedHostGrade == 0} onClick={() => setSelectedHostGrade(0)}><CloseIcon/></IconButton></Tooltip>
+                      <Tooltip title="Delete"><IconButton size="small" color="error" disabled={hostGrade == null} onClick={deleteHostGrade}><DeleteIcon/></IconButton></Tooltip>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              }
               <TableRow>
                 <TableCell>Description</TableCell>
                 <TableCell>{accomodation.description}</TableCell>
@@ -376,7 +503,26 @@ const AccomodationDetails = () => {
                   <TableCell><Rating value={grade.value} readOnly></Rating></TableCell>
               </TableRow>
             ))}
-          </TableBody>
+          </TableBody>          
+        </Table>
+        <Typography variant="h5" sx={{mt: 4}}>Host ratings</Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Guest</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Rating</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {hostGrades.map((grade) => (
+              <TableRow key={grade.id}>
+                  <TableCell>{grade.guestUsername}</TableCell>
+                  <TableCell>{new Date(grade.created).toLocaleDateString() + " " + new Date(grade.created).toLocaleTimeString()}</TableCell>
+                  <TableCell><Rating value={grade.value} readOnly></Rating></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>          
         </Table>
       </Grid>
     </Grid>

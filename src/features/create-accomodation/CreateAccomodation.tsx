@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom"
 import { Accomodation } from "../../app/models/Accomodation"
 import axios from "axios"
 import { Address } from "cluster"
+import { useAppSelector } from "../../app/store/configureStore"
 
 export const CreateAccomodation = () => {
   const [name, setName] = useState<string>("")
@@ -16,6 +17,7 @@ export const CreateAccomodation = () => {
   const [minCapacity, setMinCapacity] = useState<number>(0)
   const [maxCapacity, setMaxCapacity] = useState<number>(0)
   const [accomodations, setAccomodations] = useState<Accomodation | null>(null)
+  const { user } = useAppSelector((state) => state.acount)
 
   // useEffect(() => {
   //   axios
@@ -59,7 +61,7 @@ export const CreateAccomodation = () => {
       streetNumber: streetNumber,
     }
     let newAccomodation = {
-      hostId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      hostId: user?.id,
       name: name,
       description: description,
       pricePerGuest: pricePerGuest,
