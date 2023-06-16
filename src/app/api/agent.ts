@@ -127,6 +127,18 @@ const ReservationRequest = {
     canGuestGradeAccomodation: (username: string, accomodationId: any) => requests.get(`Reservation/canGuestGradeAccomodation/${username}/${accomodationId}`),
   }
 
+  const NotificationUserSettings = {
+    getByUser: (id: any) => requests.get(`NotificationUserSettings/getByUser/${id}`),
+    updateUserSettings: (userSettings: any) => requests.put(`NotificationUserSettings/${userSettings.id}`, userSettings)
+  }
+
+  const Notification = {
+    getById: (id: any) => requests.get(`Notification/${id}`),
+    getAllByUser: (id: any) => requests.get(`Notification/getAllByUser/${id}`),
+    getUnreadByUser: (id: any) => requests.get(`Notification/getUnreadByUser/${id}`),
+    updateNotification : (notification: any) => requests.put(`/Notification/${notification.id}`, notification)
+  } 
+
 const agent = {
   Account,
   Flight,
@@ -134,7 +146,9 @@ const agent = {
   AccomodationGrade,
   ReservationRequest,
   Reservation,
-  HostGrade
+  HostGrade,
+  NotificationUserSettings,
+  Notification
 }
 
 export default agent

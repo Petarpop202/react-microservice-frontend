@@ -74,6 +74,7 @@ export const CreateAccomodation = () => {
       availableToDate: availableToDate,
       isAutomaticConfirm: isAutomaticConfirm,
     }
+    
     axios
       .post("http://localhost:8001/api/Accomodation", newAccomodation)
       .then((response) => console.log(response.data))

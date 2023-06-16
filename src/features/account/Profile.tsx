@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../../app/store/configureStore";
-import { Container, Paper, Typography, Box, Grid, Button, FormControlLabel, Radio } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Switch } from "@mantine/core"
+import { Container, Paper, Typography, Box, Grid, Button } from "@mui/material";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/User";
 import { router } from "../../app/router/Router";
-import { RadioGroup } from "@mantine/core/lib/Radio/RadioGroup/RadioGroup";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
@@ -19,6 +18,14 @@ export default function Profile() {
   const [password, setPassword] = useState(user?.password ?? '');
   const [role, setRole] = useState(user?.userRole ?? '');
 
+  const [notifSettingsId, setNotifSettingsId] = useState('');
+  const [showResReqCreated, setShowResReqCreated] = useState<boolean>();
+  const [showResCanceled, setShowResCanceled] = useState<boolean>();
+  const [showHostGraded, setShowHostGraded] = useState<boolean>();
+  const [showAccomGraded, setShowAccomGraded] = useState<boolean>();
+  const [showSuperHost, setShowSuperHost] = useState<boolean>();
+  const [showResReqReply, setShowResReqReply] = useState<boolean>();
+
   const [editMode, setEditMode] = useState(false);
   const { setValue } = useForm({
     mode: 'onTouched'
@@ -29,6 +36,7 @@ export default function Profile() {
     setIsSubmitting(true);
     agent.Account.currentUser()
     .then(response => {
+        getNotificationUserSettings(response.id);
         setUser(response);
         setUsername(response.username ?? '');
         setName(response.name ?? '');
@@ -81,6 +89,42 @@ export default function Profile() {
     setRole(user?.userRole ?? '');
     setEditMode(true);
   };
+
+  const getNotificationUserSettings = (id: any) => {
+    agent.NotificationUserSettings.getByUser(id)
+      .then((response) => {
+        setNotifSettingsId(response.id)
+        setShowResReqCreated(response.showReservationRequestCreated);
+        setShowResCanceled(response.showReservationCanceled);
+        setShowHostGraded(response.showHostGraded);
+        setShowAccomGraded(response.showAccomodationGraded);
+        setShowSuperHost(response.showSuperHost);
+        setShowResReqReply(response.showReservationRequestReply);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const updateNotificationUserSettings = () => {
+    let newSettings = {
+      id: notifSettingsId,
+      userId: user?.id,
+      showReservationRequestCreated: showResReqCreated,
+      showReservationCanceled: showResCanceled,
+      showHostGraded: showHostGraded,
+      showAccomodationGraded: showAccomGraded,
+      showSuperHost: showSuperHost,
+      showReservationRequestReply: showResReqReply
+    }
+    agent.NotificationUserSettings.updateUserSettings(newSettings)
+      .then((response) => {
+        toast.success("Successfully updated notification settings!")
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 
   return (
     <Container component={Paper} maxWidth='sm' sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -241,6 +285,63 @@ export default function Profile() {
         >
         Delete</Button>
 
+      </Box>
+
+      <Typography variant="h5" sx={{mt: 4}}>
+        Notification Settings
+      </Typography>
+      <Box sx={{ width: '100%' }}>
+        <Grid container spacing={3} sx={{ mt: 1, mb: 3 }}>
+          {user?.userRole === 'HOST' &&
+            <>
+              <Grid item xs={12}>
+                <Switch
+                  label="Show Reservation Request Created"
+                  checked={showResReqCreated}
+                  onChange={(e) => setShowResReqCreated(!showResReqCreated)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Switch
+                  label="Show Reservation Canceled"
+                  checked={showResCanceled}
+                  onChange={(e) => setShowResCanceled(!showResCanceled)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Switch
+                  label="Show Host Graded"
+                  checked={showHostGraded}
+                  onChange={(e) => setShowHostGraded(!showHostGraded)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Switch
+                  label="Show Accomodation Graded"
+                  checked={showAccomGraded}
+                  onChange={(e) => setShowAccomGraded(!showAccomGraded)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Switch
+                  label="Show Super Host"
+                  checked={showSuperHost}
+                  onChange={(e) => setShowSuperHost(!showSuperHost)}
+                />
+              </Grid>
+            </>
+          }
+          {user?.userRole === 'GUEST' && 
+            <Grid item xs={12}>
+              <Switch
+                label="Show Reservation Request Reply"
+                checked={showResReqReply}
+                onChange={(e) => setShowResReqReply(!showResReqReply)}
+              />
+            </Grid>
+          }
+        </Grid>
+        <Button variant="contained" color="success" sx={{mt: 2}} onClick={updateNotificationUserSettings} fullWidth>Save</Button>
       </Box>
     </Container>
   );

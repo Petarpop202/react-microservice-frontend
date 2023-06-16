@@ -11,6 +11,7 @@ import CreateReservation from "../../features/reservation/CreateReservation"
 import GuestReservations from "../../features/reservation/GuestReservations"
 import AccomodationDetails from "../../features/catalog/AccomodationDetails"
 import HostReservations from "../../features/reservation/HostReservations"
+import ViewNotification from "../../features/notification/ViewNotifications"
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: 'guest-reservations', element: <GuestReservations/> },
       { path: 'host-reservations', element: <HostReservations/> },
       { path: "accomodation-details/:id", element: <AccomodationDetails /> },
+      { path: "notifications", element: <ViewNotification /> }
     ],
   },
 ])
