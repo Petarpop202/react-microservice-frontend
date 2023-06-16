@@ -1,9 +1,11 @@
-import { ShoppingCart } from "@mui/icons-material";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { AppBar, Badge, Box, IconButton, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAppSelector } from "../store/configureStore";
 import SignedInMenu from "./SignedInMenu";
+import agent from "../api/agent";
 
 const midLinks = [
     {title: 'catalog', path: '/catalog'},
@@ -45,7 +47,22 @@ interface Props {
 export default function Header({darkMode, handleThemeChange}: Props) {
 
     const [isLogged, setIsLogged] = useState<boolean>(false);
-    const {user} = useAppSelector(state => state.acount);   
+    const {user} = useAppSelector(state => state.acount);
+
+    const [numOfNotifs, setNumOfNotifs] = useState<number>(0);
+
+    useEffect(() => {
+        if (user?.id == null){
+            setNumOfNotifs(0)
+            return;
+        }
+
+        agent.Notification.getUnreadByUser(user?.id)
+            .then((response) => {
+                setNumOfNotifs(response.length)
+            })
+
+    }, [user])
     
     return (
         <AppBar position='static' sx={{mb: 4}}>
@@ -105,10 +122,13 @@ export default function Header({darkMode, handleThemeChange}: Props) {
                 }
 
                 <Box display='flex' alignItems='center'>
-                    <IconButton size='large' edge='start' color='inherit' sx={{mr: 2}}>
-                            <Badge badgeContent='4' color="secondary">
-                                <ShoppingCart />
-                            </Badge>
+                    <IconButton component={NavLink} to='/notifications' size='large' edge='start' color='inherit' sx={{mr: 2}}>
+                            {numOfNotifs > 0 ? 
+                                <Badge badgeContent={numOfNotifs} color="secondary">
+                                    <NotificationsActiveIcon />
+                                </Badge>
+                                : <NotificationsIcon/>
+                            }
                     </IconButton>
 
                     {
