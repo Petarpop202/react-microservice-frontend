@@ -14,6 +14,8 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
     const [searchDateOut, setSearchDateOut] = useState(new Date());
     const [searchPrice, setSearchPrice] = useState("0");
     const [searchPlace, setSearchPlace] = useState("");
+    const [searchAmenities, setSearchAmenities] = useState<string[]>([]);
+    const [searchHost, setSearchHost] = useState("");
   
     const handleSearchCapacityInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchCapacity(event.target.value);
@@ -36,7 +38,7 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
     };
   
     const handleSearchClick = () => {
-      agent.Accomodation.getAccomodationsBySearch(`?startDate=${new Date(searchDateIn).toDateString()}&endDate=${new Date(searchDateOut).toDateString()}&capacity=${Number(searchCapacity)}&price=${searchPrice}&place=${searchPlace}`)
+      agent.Accomodation.getAccomodationsBySearch(`?startDate=${new Date(searchDateIn).toDateString()}&endDate=${new Date(searchDateOut).toDateString()}&capacity=${Number(searchCapacity)}&price=${searchPrice}&place=${searchPlace}&amenities=${searchAmenities.join(",")}&host=${searchHost}`)
         .then(response => {
           setFilteredFlights(response)
           setTickets(searchCapacity)
@@ -61,6 +63,14 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
       setSearchPrice('0')
       setSearchPlace('')
     }
+
+    const handleSearchAmenitiesInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchAmenities(event.target.value.split(","));
+    };
+
+    const handleSearchHostInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchHost(event.target.value);
+    };
 
     return (
       <Paper sx={{mb: 2, padding: 2}}>
@@ -112,6 +122,20 @@ export default function SearchBar({setFilteredFlights, setTickets} : any) {
               value={searchPlace}
               margin="normal"
               onChange={handleSearchToInputChange}
+              fullWidth
+            />
+            <TextField
+              label="Amenities"
+              value={searchAmenities}
+              margin="normal"
+              onChange={handleSearchAmenitiesInputChange}
+              fullWidth
+            />
+            <TextField
+              label="Host"
+              value={searchHost}
+              margin="normal"
+              onChange={handleSearchHostInputChange}
               fullWidth
             />
             <Button
