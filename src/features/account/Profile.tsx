@@ -104,6 +104,12 @@ export default function Profile() {
       .catch((error) => {
         console.log(error)
       })
+    agent.Reservation.isSuperHost(id)
+    .then((response) =>{
+      if(response)
+        toast.success("Host is super Host!");
+      else toast.error("Host is not super Host!");
+    })
   }
 
   const updateNotificationUserSettings = () => {

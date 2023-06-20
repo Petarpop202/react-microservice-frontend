@@ -125,6 +125,7 @@ const ReservationRequest = {
     updateReservation: (reservation: any) => requests.put(`Reservation/${reservation.id}`, reservation),
     deleteReservation: (id: any) => requests.delete(`Reservation/${id}`),
     canGuestGradeAccomodation: (username: string, accomodationId: any) => requests.get(`Reservation/canGuestGradeAccomodation/${username}/${accomodationId}`),
+    isSuperHost: (id: any) => requests.get(`Reservation/isSuperHost/${id}`)
   }
 
   const NotificationUserSettings = {
